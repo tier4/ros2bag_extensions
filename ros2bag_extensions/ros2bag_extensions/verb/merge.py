@@ -25,7 +25,7 @@ from . import (create_reader, get_default_converter_options,
 
 class MergeVerb(VerbExtension):
     ''' Combine multiple bag files '''
-    def _bag2merge(input_bags: List[str], output_bag_dir: str) -> None:
+    def _bag2merge(self, input_bags: List[str], output_bag_dir: str) -> None:
         # Open writer
         storage_options = get_default_storage_options(output_bag_dir)
         converter_options = get_default_converter_options()

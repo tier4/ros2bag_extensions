@@ -25,7 +25,7 @@ from . import (create_reader, get_default_converter_options,
 
 class SliceVerb(VerbExtension):
     ''' Save the specified range of data as a bag file by specifying the start time and end time. '''
-    def _bag2slice(input_bag_dir: str, output_bag_dir: str, start_time: datetime.datetime, duration: datetime.timedelta) -> None:
+    def _bag2slice(self, input_bag_dir: str, output_bag_dir: str, start_time: datetime.datetime, duration: datetime.timedelta) -> None:
         # Check timestamp
         metadata = Info().read_metadata(input_bag_dir, "sqlite3")
 
