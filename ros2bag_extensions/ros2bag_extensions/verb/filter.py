@@ -25,7 +25,7 @@ from . import (create_reader, get_default_converter_options,
 
 class FilterVerb(VerbExtension):
     ''' Filter by topic names '''
-    def _bag2filter(input_bag_dir: str, output_bag_dir: str, exclude_topics: List[str]) -> None:
+    def _bag2filter(self, input_bag_dir: str, output_bag_dir: str, exclude_topics: List[str]) -> None:
         reader = create_reader(input_bag_dir)
 
         # Filter topics
@@ -63,4 +63,6 @@ class FilterVerb(VerbExtension):
         if os.path.isdir(args.output):
             raise FileExistsError("Output folder '{}' already exists.".format(args.output))
 
-        self._bag2filter(input_bag_dir=args.bag_directory, output_bag_dir=args.output, exclude_topics=args.topics)
+        print(args.bag_directory)
+
+        self._bag2filter(args.bag_directory, args.output, args.topics)
