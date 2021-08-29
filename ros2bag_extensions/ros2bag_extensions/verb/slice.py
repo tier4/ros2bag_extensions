@@ -33,7 +33,7 @@ class SliceVerb(VerbExtension):
             start_time = metadata.starting_time
 
         if end_time > metadata.starting_time + metadata.duration:
-            print("No valid end time set. End time automatically set Jan. 1st, 2100.")
+            print("No valid end time set. End time automatically set the bag end time.")
             end_time = metadata.starting_time + metadata.duration
 
         # Open writer
