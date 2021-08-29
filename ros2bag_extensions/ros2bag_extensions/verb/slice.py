@@ -19,22 +19,22 @@ from ros2bag.api import check_path_exists
 from ros2bag.verb import VerbExtension
 from rosbag2_py import *
 
-from . import (create_reader, get_default_converter_options,
-               get_default_storage_options)
+from . import create_reader, get_default_converter_options, get_default_storage_options
 
 
 class SliceVerb(VerbExtension):
     ''' Save the specified range of data as a bag file by specifying the start time and end time. '''
-    def _bag2slice(self, input_bag_dir: str, output_bag_dir: str, start_time: datetime.datetime, duration: datetime.timedelta) -> None:
+    def _bag2slice(self, input_bag_dir: str, output_bag_dir: str, start_time: datetime.datetime, end_time: datetime.datetime) -> None:
         # Check timestamp
         metadata = Info().read_metadata(input_bag_dir, "sqlite3")
 
         if start_time < metadata.starting_time:
-            raise ValueError("ERROR: start_time is smaller than starting_time")
+            print("No valid start time set. Start time automatically set the bag start time.")
+            start_time = metadata.starting_time
 
-        end_time = start_time + duration
         if end_time > metadata.starting_time + metadata.duration:
-            raise ValueError("ERROR: end_time is bigger than starting_time + duration")
+            print("No valid end time set. End time automatically set Jan. 1st, 2100.")
+            end_time = metadata.starting_time + metadata.duration
 
         # Open writer
         storage_options = get_default_storage_options(output_bag_dir)
@@ -61,16 +61,16 @@ class SliceVerb(VerbExtension):
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
         parser.add_argument(
-            "-s", "--start-time", required=True, type=int, help="Start time in nanoseconds")
+            "-s", "--start-time", default=0.0, type=float, help="Start time in nanoseconds")
         parser.add_argument(
-            "-d", "--duration", required=True, type=int, help="Duration in nanoseconds")
+            "-e", "--end-time", default=4102412400, type=float, help="End time in nanoseconds") # 2100/01/01 00:00:00
 
 
     def main(self, *, args):
         if os.path.isdir(args.output):
             raise FileExistsError("Output folder '{}' already exists.".format(args.output))
 
-        args.start_time = datetime.datetime.fromtimestamp(args.start_time / 1e9)
-        args.duration = datetime.timedelta(microseconds=args.duration / 1e3)
+        dt_start_time = datetime.datetime.fromtimestamp(args.start_time)
+        dt_end_time = datetime.datetime.fromtimestamp(args.end_time)
 
-        self._bag2slice(args.bag_directory, args.output, args.start_time, args.duration)
+        self._bag2slice(args.bag_directory, args.output, dt_start_time, dt_end_time)
