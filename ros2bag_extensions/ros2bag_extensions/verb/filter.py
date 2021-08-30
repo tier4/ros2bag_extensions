@@ -19,17 +19,21 @@ from ros2bag.api import check_path_exists
 from ros2bag.verb import VerbExtension
 from rosbag2_py import *
 
-from . import (create_reader, get_default_converter_options,
-               get_default_storage_options)
+from . import create_reader, get_default_converter_options, get_default_storage_options
 
 
 class FilterVerb(VerbExtension):
     ''' Filter by topic names '''
-    def _bag2filter(self, input_bag_dir: str, output_bag_dir: str, exclude_topics: List[str]) -> None:
+    def _bag2filter(self, input_bag_dir: str, output_bag_dir: str, include_topics: List[str], exclude_topics: List[str]) -> None:
         reader = create_reader(input_bag_dir)
 
         # Filter topics
-        topic_list = [topic.name for topic in reader.get_all_topics_and_types() if topic.name not in exclude_topics]
+        if include_topics:
+            topic_list = [topic.name for topic in reader.get_all_topics_and_types() if topic.name in include_topics]
+        elif exclude_topics:
+            topic_list = [topic.name for topic in reader.get_all_topics_and_types() if topic.name not in exclude_topics]
+        else:
+            topic_list = [topic.name for topic in reader.get_all_topics_and_types()]
 
         topic_filter = StorageFilter(topics=topic_list)
         reader.set_filter(topic_filter)
@@ -48,6 +52,10 @@ class FilterVerb(VerbExtension):
         while reader.has_next():
             topic_name, msg, stamp = reader.read_next()
             writer.write(topic_name, msg, stamp)
+        del writer
+
+        # Reindex for cleanup metadata
+        Reindexer().reindex(storage_options)
 
 
     def add_arguments(self, parser, cli_name):
@@ -55,14 +63,13 @@ class FilterVerb(VerbExtension):
             "bag_directory", type=check_path_exists, help="Bag to filter")
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
-        parser.add_argument(
-            "-t", "--topics", required=True, nargs="+", help="Topics to filter.")
+        group = parser.add_mutually_exclusive_group(required=True)
+        group.add_argument("-i", "--include", nargs="+", help="Topics to include.")
+        group.add_argument("-x", "--exclude", nargs="+", help="Topics to exclude.")
 
 
     def main(self, *, args):
         if os.path.isdir(args.output):
             raise FileExistsError("Output folder '{}' already exists.".format(args.output))
 
-        print(args.bag_directory)
-
-        self._bag2filter(args.bag_directory, args.output, args.topics)
+        self._bag2filter(args.bag_directory, args.output, args.include, args.exclude)
