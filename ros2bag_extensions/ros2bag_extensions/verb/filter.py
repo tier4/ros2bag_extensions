@@ -19,8 +19,7 @@ from ros2bag.api import check_path_exists
 from ros2bag.verb import VerbExtension
 from rosbag2_py import *
 
-from . import (create_reader, get_default_converter_options,
-               get_default_storage_options)
+from . import create_reader, get_default_converter_options, get_default_storage_options
 
 
 class FilterVerb(VerbExtension):
@@ -60,17 +59,13 @@ class FilterVerb(VerbExtension):
             "bag_directory", type=check_path_exists, help="Bag to filter")
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
-        parser.add_argument(
-            "-i", "--include", required=False, nargs="+", help="Topics to include.")
-        parser.add_argument(
-            "-x", "--exclude", required=False, nargs="+", help="Topics to exclude.")
+        group = parser.add_mutually_exclusive_group(required=True)
+        group.add_argument("-i", "--include", nargs="+", help="Topics to include.")
+        group.add_argument("-x", "--exclude", nargs="+", help="Topics to exclude.")
 
 
     def main(self, *, args):
         if os.path.isdir(args.output):
             raise FileExistsError("Output folder '{}' already exists.".format(args.output))
-
-        if args.include and args.exclude:
-            raise ValueError("Cannot specify both --include and --exclude.")
 
         self._bag2filter(args.bag_directory, args.output, args.include, args.exclude)
