@@ -45,8 +45,16 @@ Filter by topic names.
 
 Usage:
 
+If you want to include the specified topic, use `-i` or `--include`.
+
 ```sh
-ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -t "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
+ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
+```
+
+If you want to exclude the specified topic, use `-x` or `--exclude`.
+
+```sh
+ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
 ```
 
 - ros2 bag slice
