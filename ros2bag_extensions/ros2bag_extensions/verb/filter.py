@@ -52,6 +52,10 @@ class FilterVerb(VerbExtension):
         while reader.has_next():
             topic_name, msg, stamp = reader.read_next()
             writer.write(topic_name, msg, stamp)
+        del writer
+
+        # Reindex for cleanup metadata
+        Reindexer().reindex(storage_options)
 
 
     def add_arguments(self, parser, cli_name):
