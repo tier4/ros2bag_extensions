@@ -25,11 +25,16 @@ from . import (create_reader, get_default_converter_options,
 
 class FilterVerb(VerbExtension):
     ''' Filter by topic names '''
-    def _bag2filter(self, input_bag_dir: str, output_bag_dir: str, exclude_topics: List[str]) -> None:
+    def _bag2filter(self, input_bag_dir: str, output_bag_dir: str, include_topics: List[str], exclude_topics: List[str]) -> None:
         reader = create_reader(input_bag_dir)
 
         # Filter topics
-        topic_list = [topic.name for topic in reader.get_all_topics_and_types() if topic.name not in exclude_topics]
+        if include_topics:
+            topic_list = [topic.name for topic in reader.get_all_topics_and_types() if topic.name in include_topics]
+        elif exclude_topics:
+            topic_list = [topic.name for topic in reader.get_all_topics_and_types() if topic.name not in exclude_topics]
+        else:
+            topic_list = [topic.name for topic in reader.get_all_topics_and_types()]
 
         topic_filter = StorageFilter(topics=topic_list)
         reader.set_filter(topic_filter)
@@ -56,13 +61,16 @@ class FilterVerb(VerbExtension):
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
         parser.add_argument(
-            "-t", "--topics", required=True, nargs="+", help="Topics to filter.")
+            "-i", "--include", required=False, nargs="+", help="Topics to include.")
+        parser.add_argument(
+            "-x", "--exclude", required=False, nargs="+", help="Topics to exclude.")
 
 
     def main(self, *, args):
         if os.path.isdir(args.output):
             raise FileExistsError("Output folder '{}' already exists.".format(args.output))
 
-        print(args.bag_directory)
+        if args.include and args.exclude:
+            raise ValueError("Cannot specify both --include and --exclude.")
 
-        self._bag2filter(args.bag_directory, args.output, args.topics)
+        self._bag2filter(args.bag_directory, args.output, args.include, args.exclude)
