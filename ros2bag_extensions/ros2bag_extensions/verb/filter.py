@@ -14,6 +14,7 @@
 
 import os
 from typing import List
+import re
 
 from ros2bag.api import check_path_exists
 from ros2bag.verb import VerbExtension
@@ -29,9 +30,17 @@ class FilterVerb(VerbExtension):
 
         # Filter topics
         if include_topics:
-            topic_list = [topic.name for topic in reader.get_all_topics_and_types() if topic.name in include_topics]
+            topic_list = [topic.name for topic in reader.get_all_topics_and_types()]
+            include_topic_list = []
+            for include_topic in include_topics:
+                include_topic_list += [topic_name for topic_name in topic_list if re.match(include_topic, topic_name)]
+            topic_list = list(set(topic_list).intersection(set(include_topic_list)))
         elif exclude_topics:
-            topic_list = [topic.name for topic in reader.get_all_topics_and_types() if topic.name not in exclude_topics]
+            topic_list = [topic.name for topic in reader.get_all_topics_and_types()]
+            exclude_topic_list = []
+            for exclude_topic in exclude_topics:
+                exclude_topic_list += [topic_name for topic_name in topic_list if re.match(exclude_topic, topic_name)]
+            topic_list = list(set(topic_list).difference(set(exclude_topic_list)))
         else:
             topic_list = [topic.name for topic in reader.get_all_topics_and_types()]
 
