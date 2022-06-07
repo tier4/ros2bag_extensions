@@ -41,7 +41,7 @@ ros2 bag merge -o rosbag2_merged/ rosbag2_2021_08_20-12_28_24/ rosbag2_2021_08_2
 
 - ros2 bag filter
 
-Filter by topic names.
+Filter by topic names. You can use [python3 regular expression operations](https://docs.python.org/3.8/library/re.html).
 
 Usage:
 
