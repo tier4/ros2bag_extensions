@@ -7,18 +7,19 @@ Extension commands for rosbag in ROS 2
 Supported ROS distributions:
 
 - galactic
+- humble
 
-#### Build
+### Build
 
 ```bash
 git clone git@github.com:tier4/ros2bag_extensions.git
 cd ros2bag_extensions
-rosdep install --from-paths . --ignore-src --rosdistro=galactic
 source /opt/ros/galactic/setup.bash
+rosdep install --from-paths . --ignore-src --rosdistro=${ROS_DISTRO}
 colcon build
 ```
 
-#### Check installation
+### Check installation
 
 ```bash
 source install/local_setup.bash
@@ -49,12 +50,16 @@ If you want to include the specified topic, use `-i` or `--include`.
 
 ```sh
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
+# use Regular expression, wildcard
+ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/sensing/*" "/vehicle/*"
 ```
 
 If you want to exclude the specified topic, use `-x` or `--exclude`.
 
 ```sh
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
+# use Regular expression, wildcard
+ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/sensing/*" "/vehicle/*"
 ```
 
 - ros2 bag slice
