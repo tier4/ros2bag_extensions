@@ -33,13 +33,13 @@ class FilterVerb(VerbExtension):
             topic_list = [topic.name for topic in reader.get_all_topics_and_types()]
             include_topic_list = []
             for include_topic in include_topics:
-                include_topic_list += [topic_name for topic_name in topic_list if re.match(include_topic, topic_name)]
+                include_topic_list += [topic_name for topic_name in topic_list if re.fullmatch(include_topic, topic_name)]
             topic_list = list(set(topic_list).intersection(set(include_topic_list)))
         elif exclude_topics:
             topic_list = [topic.name for topic in reader.get_all_topics_and_types()]
             exclude_topic_list = []
             for exclude_topic in exclude_topics:
-                exclude_topic_list += [topic_name for topic_name in topic_list if re.match(exclude_topic, topic_name)]
+                exclude_topic_list += [topic_name for topic_name in topic_list if re.fullmatch(exclude_topic, topic_name)]
             topic_list = list(set(topic_list).difference(set(exclude_topic_list)))
         else:
             topic_list = [topic.name for topic in reader.get_all_topics_and_types()]
