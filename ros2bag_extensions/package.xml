@@ -11,6 +11,7 @@
 
   <depend>ros2bag</depend>
   <depend>rosbag2_py</depend>
+  <depend>rosbag2_py_wrapper</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
