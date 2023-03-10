@@ -24,7 +24,6 @@ from . import create_reader, get_default_converter_options, get_default_storage_
 
 
 class SliceVerb(VerbExtension):
-
     ''' Save the specified range of data as a bag file by specifying the start time and end time. '''
     def _bag2slice_with_start_end_time(self, input_bag_dir: str, output_bag_dir: str, start_time: datetime.datetime, end_time: datetime.datetime) -> None:
         # Check timestamp
