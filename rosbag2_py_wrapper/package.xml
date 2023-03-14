@@ -11,6 +11,7 @@
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <depend>pybind11_vendor</depend>
+  <depend>pybind11</depend>
   <depend>rosbag2_cpp</depend>
 
   <exec_depend>rpyutils</exec_depend>
