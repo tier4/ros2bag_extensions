@@ -35,7 +35,7 @@ Make sure that the `filter`, `merge`, and `slice` commands have been added to th
 
 ## Usage
 
-- ros2 bag merge
+### ros2 bag merge
 
 Merge multiple bag files.
 
@@ -45,7 +45,7 @@ Usage:
 ros2 bag merge -o rosbag2_merged/ rosbag2_2021_08_20-12_28_24/ rosbag2_2021_08_20-12_30_03/
 ```
 
-- ros2 bag filter
+### ros2 bag filter
 
 Filter by topic names. You can use [python3 regular expression operations](https://docs.python.org/3.8/library/re.html).
 
@@ -67,7 +67,11 @@ ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/system/emergency/turn_
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/sensing/.*" "/vehicle/.*"
 ```
 
-- ros2 bag slice
+### ros2 bag slice
+
+This verb has two functions
+
+#### extract with start and end time
 
 Save the specified range of data as a bag file by specifying the start time and end time.
 
@@ -82,4 +86,15 @@ ros2 bag slice input_bag -o sliced_till -e 1629430124
 
 # from 1629430104.911 to 1629430124
 ros2 bag slice input_bag -o sliced_between -s 1629430104.911 -e 1629430124
+```
+
+#### split into multiple files
+
+Split bag file into multiple files with specified duration second.
+
+Usage:
+
+```sh
+# split input_bag into sliced bags which has 60secs
+ros2 bag slice input_bag -o sliced_bags -d 60
 ```
