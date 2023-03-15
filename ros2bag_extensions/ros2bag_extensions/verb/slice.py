@@ -80,18 +80,15 @@ class SliceVerb(VerbExtension):
                 writer.split_bagfile()
                 split_timestamp = stamp
 
-
-
-
     def add_arguments(self, parser, cli_name):
         parser.add_argument(
             "bag_directory", type=check_path_exists, help="Bag to filter")
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
         parser.add_argument(
-            "-s", "--start-time", type=float, help="Start time in nanoseconds")
+            "-s", "--start-time", default=0.0, type=float, help="Start time in nanoseconds")
         parser.add_argument(
-            "-e", "--end-time", type=float, help="End time in nanoseconds") # 2100/01/01 00:00:00
+            "-e", "--end-time", default=4102412400, type=float, help="End time in nanoseconds")  # 2100/01/01 00:00:00
         parser.add_argument(
             "-d", "--duration", type=float, help="duration second for slice")
 
@@ -99,13 +96,10 @@ class SliceVerb(VerbExtension):
         if os.path.isdir(args.output):
             raise FileExistsError("Output folder '{}' already exists.".format(args.output))
 
-        # start_time and end_time exists
-        if args.start_time is not None and args.end_time is not None:
+        # duration mode
+        if args.duration is not None:
+            self._bag2slice_with_duration(args.bag_directory, args.output, args.duration)
+        else:  # start and end mode
             dt_start_time = datetime.datetime.fromtimestamp(args.start_time)
             dt_end_time = datetime.datetime.fromtimestamp(args.end_time)
-
             self._bag2slice_with_start_end_time(args.bag_directory, args.output, dt_start_time, dt_end_time)
-        elif args.duration is not None:
-            self._bag2slice_with_duration(args.bag_directory, args.output, args.duration)
-        else:
-            print("please specify start and end time or duration")
