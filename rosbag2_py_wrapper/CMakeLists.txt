@@ -15,6 +15,7 @@ find_package(ament_cmake_auto REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 ament_auto_find_build_dependencies()
+find_package(pybind11 REQUIRED)
 
 ament_python_install_package(${PROJECT_NAME})
 

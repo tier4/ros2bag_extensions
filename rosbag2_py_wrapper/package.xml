@@ -11,9 +11,7 @@
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <depend>pybind11_vendor</depend>
-  <depend>pybind11</depend>
   <depend>python_cmake_module</depend>
-  <depend>PythonExtra</depend>
   <depend>rosbag2_cpp</depend>
   <depend>rosbag2_storage</depend>
 
