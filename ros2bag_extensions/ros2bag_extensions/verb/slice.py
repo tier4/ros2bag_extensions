@@ -111,4 +111,4 @@ class SliceVerb(VerbExtension):
         else:  # start and end mode
             dt_start_time = datetime.datetime.fromtimestamp(args.start_time)
             dt_end_time = datetime.datetime.fromtimestamp(args.end_time)
-            self._bag2slice_with_start_end_time(args.bag_directory, args.output, dt_start_time, dt_end_time)
+            self._bag2slice_with_start_end_time(args.bag_directory, args.output, dt_start_time, dt_end_time, args.latched_topics)
