@@ -56,8 +56,10 @@ class SliceVerb(VerbExtension):
             datetime_stamp = datetime.datetime.fromtimestamp(stamp / 1e9)
             if start_time <= datetime_stamp <= end_time:
                 writer.write(topic_name, msg, stamp)
-                for kept_topic in kept_topics:
+                while kept_topics:
+                    kept_topic = kept_topics.pop(0)
                     writer.write(kept_topic[0], kept_topic[1], stamp)
+
             elif topic_name in latched_topic:
                 kept_topics.append((topic_name, msg))
 
