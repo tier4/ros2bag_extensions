@@ -25,8 +25,8 @@ from . import create_reader, get_default_converter_options, get_default_storage_
 
 class FilterVerb(VerbExtension):
     ''' Filter by topic names '''
-    def _bag2filter(self, input_bag_dir: str, output_bag_dir: str, include_topics: List[str], exclude_topics: List[str]) -> None:
-        reader = create_reader(input_bag_dir)
+    def _bag2filter(self, input_bag_dir: str, output_bag_dir: str, include_topics: List[str], exclude_topics: List[str], storage_type: str) -> None:
+        reader = create_reader(input_bag_dir, storage_type)
 
         # Filter topics
         if include_topics:
@@ -48,7 +48,7 @@ class FilterVerb(VerbExtension):
         reader.set_filter(topic_filter)
 
         # Open writer
-        storage_options = get_default_storage_options(output_bag_dir)
+        storage_options = get_default_storage_options(output_bag_dir, storage_type)
         converter_options = get_default_converter_options()
         writer = SequentialWriter()
         writer.open(storage_options, converter_options)
@@ -75,10 +75,12 @@ class FilterVerb(VerbExtension):
         group = parser.add_mutually_exclusive_group(required=True)
         group.add_argument("-i", "--include", nargs="+", help="Topics to include.")
         group.add_argument("-x", "--exclude", nargs="+", help="Topics to exclude.")
+        parser.add_argument(
+            "-s", "--storage", default="sqlite3", help="storage identifier to be used, defaults to 'sqlite3'")
 
 
     def main(self, *, args):
         if os.path.isdir(args.output):
             raise FileExistsError("Output folder '{}' already exists.".format(args.output))
 
-        self._bag2filter(args.bag_directory, args.output, args.include, args.exclude)
+        self._bag2filter(args.bag_directory, args.output, args.include, args.exclude, args.storage)
