@@ -76,7 +76,7 @@ class FilterVerb(VerbExtension):
         group.add_argument("-i", "--include", nargs="+", help="Topics to include.")
         group.add_argument("-x", "--exclude", nargs="+", help="Topics to exclude.")
         parser.add_argument(
-            "-s", "--storage", default="sqlite3", help="storage identifier to be used, defaults to 'sqlite3'")
+            "-s", "--storage", required=False, default="sqlite3", help="storage identifier to be used, defaults to 'sqlite3'")
 
 
     def main(self, *, args):
