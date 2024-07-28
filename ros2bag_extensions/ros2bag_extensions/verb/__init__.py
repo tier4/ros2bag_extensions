@@ -16,8 +16,8 @@ from datetime import datetime
 from rosbag2_py import *
 
 
-def create_reader(bag_dir: str) -> SequentialReader:
-    storage_options = get_default_storage_options(bag_dir)
+def create_reader(bag_dir: str, storage_type: str) -> SequentialReader:
+    storage_options = get_storage_options(bag_dir, storage_type)
     converter_options = get_default_converter_options()
 
     reader = SequentialReader()
@@ -32,13 +32,13 @@ def get_default_converter_options() -> ConverterOptions:
     )
 
 
-def get_default_storage_options(uri: str) -> StorageOptions:
+def get_storage_options(uri: str, storage_type: str) -> StorageOptions:
     return StorageOptions(
         uri=uri,
-        storage_id="sqlite3",
+        storage_id=storage_type,
     )
 
 
-def get_starting_time(uri: str) -> datetime:
-    info = Info().read_metadata(uri, "sqlite3")
+def get_starting_time(uri: str, storage_type: str) -> datetime:
+    info = Info().read_metadata(uri, storage_type)
     return info.starting_time

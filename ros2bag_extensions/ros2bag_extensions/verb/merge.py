@@ -20,23 +20,23 @@ from ros2bag.verb import VerbExtension
 from rosbag2_py import *
 
 from . import (create_reader, get_default_converter_options,
-               get_default_storage_options, get_starting_time)
+               get_storage_options, get_starting_time)
 
 
 class MergeVerb(VerbExtension):
     ''' Combine multiple bag files '''
-    def _bag2merge(self, input_bags: List[str], output_bag_dir: str) -> None:
+    def _bag2merge(self, input_bags: List[str], output_bag_dir: str, storage_type: str) -> None:
         # Open writer
-        storage_options = get_default_storage_options(output_bag_dir)
+        storage_options = get_storage_options(output_bag_dir, storage_type)
         converter_options = get_default_converter_options()
         writer = SequentialWriter()
         writer.open(storage_options, converter_options)
 
         # NOTE: To make SequentialWriter work properly, read starting_time in order of oldest to newest.
-        input_bags = sorted(input_bags, key=get_starting_time)
+        input_bags = sorted(input_bags, key=lambda bag: get_starting_time(bag, storage_type))
 
         for input_bag in input_bags:
-            reader = create_reader(input_bag)
+            reader = create_reader(input_bag, storage_type)
 
             # Merge
             # NOTE: In the case of SQLite3 storage, it is sorted by ORDERED BY timestamp when reading, so sorting is not necessary when writing.
@@ -55,10 +55,12 @@ class MergeVerb(VerbExtension):
             "bag_directory", type=check_path_exists, nargs="+", help="Bag to filter")
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
+        parser.add_argument(
+            "-s", "--storage", required=False, default="sqlite3", help="storage identifier to be used, defaults to 'sqlite3'")
 
 
     def main(self, *, args):
         if os.path.isdir(args.output):
             raise FileExistsError("Output folder '{}' already exists.".format(args.output))
 
-        self._bag2merge(args.bag_directory, args.output)
+        self._bag2merge(args.bag_directory, args.output, args.storage)

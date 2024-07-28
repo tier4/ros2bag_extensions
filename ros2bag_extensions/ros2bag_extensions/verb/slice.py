@@ -20,12 +20,12 @@ from ros2bag.verb import VerbExtension
 from rosbag2_py import *
 from rosbag2_py_wrapper import SequentialWriterWrapper
 
-from . import create_reader, get_default_converter_options, get_default_storage_options
+from . import create_reader, get_default_converter_options, get_storage_options
 
 
 class SliceVerb(VerbExtension):
     ''' Save the specified range of data as a bag file by specifying the start time and end time. '''
-    def _bag2slice_with_start_end_time(self, input_bag_dir: str, output_bag_dir: str, start_time: datetime.datetime, end_time: datetime.datetime, latched_topic: list[str]) -> None:
+    def _bag2slice_with_start_end_time(self, input_bag_dir: str, output_bag_dir: str, start_time: datetime.datetime, end_time: datetime.datetime, latched_topic: list[str], storage_type: str) -> None:
         # Check timestamp
         metadata = Info().read_metadata(input_bag_dir, "sqlite3")
 
@@ -38,13 +38,13 @@ class SliceVerb(VerbExtension):
             end_time = metadata.starting_time + metadata.duration
 
         # Open writer
-        storage_options = get_default_storage_options(output_bag_dir)
+        storage_options = get_storage_options(output_bag_dir, storage_type)
         converter_options = get_default_converter_options()
         writer = SequentialWriter()
         writer.open(storage_options, converter_options)
 
         # Create topics
-        reader = create_reader(input_bag_dir)
+        reader = create_reader(input_bag_dir, storage_type)
         for topic_type in reader.get_all_topics_and_types():
             writer.create_topic(topic_type)
 
@@ -64,15 +64,15 @@ class SliceVerb(VerbExtension):
                 kept_topics.append((topic_name, msg))
 
     ''' Split and save bag files by specifying the duration. '''
-    def _bag2slice_with_duration(self, input_bag_dir: str, output_bag_dir: str, duration: float) -> None:
+    def _bag2slice_with_duration(self, input_bag_dir: str, output_bag_dir: str, duration: float, storage_type: str) -> None:
         # Open writer
-        storage_options = get_default_storage_options(output_bag_dir)
+        storage_options = get_storage_options(output_bag_dir, storage_type)
         converter_options = get_default_converter_options()
         writer = SequentialWriterWrapper()
         writer.open(storage_options, converter_options)
 
         # Create topics
-        reader = create_reader(input_bag_dir)
+        reader = create_reader(input_bag_dir, storage_type)
         for topic_type in reader.get_all_topics_and_types():
             writer.create_topic(topic_type)
 
@@ -94,14 +94,15 @@ class SliceVerb(VerbExtension):
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
         parser.add_argument(
-            "-s", "--start-time", default=0.0, type=float, help="Start time in nanoseconds")
+            "-b", "--beginning-time", default=0.0, type=float, help="Beginning time in nanoseconds")
         parser.add_argument(
             "-e", "--end-time", default=4102412400, type=float, help="End time in nanoseconds")  # 2100/01/01 00:00:00
         parser.add_argument(
             "-d", "--duration", type=float, help="duration second for slice")
         parser.add_argument(
-            "-l", "--latched-topics", nargs="*", type=str, help="list of latched topics", default=[]
-        )
+            "-l", "--latched-topics", nargs="*", type=str, help="list of latched topics", default=[])
+        parser.add_argument(
+            "-s", "--storage", required=False, default="sqlite3", help="storage identifier to be used, defaults to 'sqlite3'")
 
     def main(self, *, args):
         if os.path.isdir(args.output):
@@ -109,8 +110,8 @@ class SliceVerb(VerbExtension):
 
         # duration mode
         if args.duration is not None:
-            self._bag2slice_with_duration(args.bag_directory, args.output, args.duration)
+            self._bag2slice_with_duration(args.bag_directory, args.output, args.duration, args.storage)
         else:  # start and end mode
-            dt_start_time = datetime.datetime.fromtimestamp(args.start_time)
+            dt_start_time = datetime.datetime.fromtimestamp(args.beginning_time)
             dt_end_time = datetime.datetime.fromtimestamp(args.end_time)
-            self._bag2slice_with_start_end_time(args.bag_directory, args.output, dt_start_time, dt_end_time, args.latched_topics)
+            self._bag2slice_with_start_end_time(args.bag_directory, args.output, dt_start_time, dt_end_time, args.latched_topics, args.storage)
