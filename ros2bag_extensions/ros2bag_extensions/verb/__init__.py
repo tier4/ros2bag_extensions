@@ -17,7 +17,7 @@ from rosbag2_py import *
 
 
 def create_reader(bag_dir: str, storage_type: str) -> SequentialReader:
-    storage_options = get_default_storage_options(bag_dir, storage_type)
+    storage_options = get_storage_options(bag_dir, storage_type)
     converter_options = get_default_converter_options()
 
     reader = SequentialReader()
@@ -32,7 +32,7 @@ def get_default_converter_options() -> ConverterOptions:
     )
 
 
-def get_default_storage_options(uri: str, storage_type: str) -> StorageOptions:
+def get_storage_options(uri: str, storage_type: str) -> StorageOptions:
     return StorageOptions(
         uri=uri,
         storage_id=storage_type,

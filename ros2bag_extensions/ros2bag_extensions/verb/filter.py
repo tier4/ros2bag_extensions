@@ -20,7 +20,7 @@ from ros2bag.api import check_path_exists
 from ros2bag.verb import VerbExtension
 from rosbag2_py import *
 
-from . import create_reader, get_default_converter_options, get_default_storage_options
+from . import create_reader, get_default_converter_options, get_storage_options
 
 
 class FilterVerb(VerbExtension):
@@ -48,7 +48,7 @@ class FilterVerb(VerbExtension):
         reader.set_filter(topic_filter)
 
         # Open writer
-        storage_options = get_default_storage_options(output_bag_dir, storage_type)
+        storage_options = get_storage_options(output_bag_dir, storage_type)
         converter_options = get_default_converter_options()
         writer = SequentialWriter()
         writer.open(storage_options, converter_options)
