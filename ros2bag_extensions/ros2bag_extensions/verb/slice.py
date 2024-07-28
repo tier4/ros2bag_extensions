@@ -94,7 +94,7 @@ class SliceVerb(VerbExtension):
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
         parser.add_argument(
-            "-s", "--start-time", default=0.0, type=float, help="Start time in nanoseconds")
+            "-b", "--beginning-time", default=0.0, type=float, help="Beginning time in nanoseconds")
         parser.add_argument(
             "-e", "--end-time", default=4102412400, type=float, help="End time in nanoseconds")  # 2100/01/01 00:00:00
         parser.add_argument(
@@ -112,6 +112,6 @@ class SliceVerb(VerbExtension):
         if args.duration is not None:
             self._bag2slice_with_duration(args.bag_directory, args.output, args.duration, args.storage)
         else:  # start and end mode
-            dt_start_time = datetime.datetime.fromtimestamp(args.start_time)
+            dt_start_time = datetime.datetime.fromtimestamp(args.beginning_time)
             dt_end_time = datetime.datetime.fromtimestamp(args.end_time)
             self._bag2slice_with_start_end_time(args.bag_directory, args.output, dt_start_time, dt_end_time, args.latched_topics, args.storage)
