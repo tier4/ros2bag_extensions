@@ -6,8 +6,15 @@ Extension commands for rosbag in ROS 2
 
 Supported ROS distributions:
 
-- galactic
 - humble
+
+### Optional
+
+If you want to use `mcap` format bags, you need to install the mcap package in advance.
+
+```shell
+sudo apt install ros-humble-rosbag2-storage-mcap
+```
 
 ### Build
 
@@ -42,7 +49,11 @@ Merge multiple bag files.
 Usage:
 
 ```sh
+# sqlite3 format bag
 ros2 bag merge -o rosbag2_merged/ rosbag2_2021_08_20-12_28_24/ rosbag2_2021_08_20-12_30_03/
+
+# mcap format bag
+ros2 bag merge -o rosbag2_merged/ rosbag2_2021_08_20-12_28_24/ rosbag2_2021_08_20-12_30_03/ -s mcap
 ```
 
 ### ros2 bag filter
@@ -54,7 +65,12 @@ Usage:
 If you want to include the specified topic, use `-i` or `--include`.
 
 ```sh
+# sqlite3 format bag
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
+
+# mcap format bag
+ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/system/emergency/turn_signal_cmd" "/autoware/driving_capability" -s mcap
+
 # use regular expression
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/sensing/.*" "/vehicle/.*"
 ```
@@ -62,6 +78,7 @@ ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/sensing/.*" "/vehicle/
 If you want to exclude the specified topic, use `-x` or `--exclude`.
 
 ```sh
+# sqlite3 format bag
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
 # use regular expression
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/sensing/.*" "/vehicle/.*"
@@ -78,14 +95,17 @@ Save the specified range of data as a bag file by specifying the start time and 
 Usage:
 
 ```sh
-# from 1629430104.911167670 to the bag end time
-ros2 bag slice input_bag -o sliced_from -s 1629430104.911167670
+# sqlite3 format, from 1629430104.911167670 to the bag end time
+ros2 bag slice input_bag -o sliced_from -b 1629430104.911167670
 
-# from the bag start time to 1629430124
+# mcap format, from 1629430104.911167670 to the bag end time
+ros2 bag slice input_bag -o sliced_from -b 1629430104.911167670 -s mcap
+
+# from the bag begging time to 1629430124
 ros2 bag slice input_bag -o sliced_till -e 1629430124
 
 # from 1629430104.911 to 1629430124
-ros2 bag slice input_bag -o sliced_between -s 1629430104.911 -e 1629430124
+ros2 bag slice input_bag -o sliced_between -b 1629430104.911 -e 1629430124
 ```
 
 #### split into multiple files
