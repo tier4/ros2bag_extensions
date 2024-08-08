@@ -14,6 +14,7 @@
 
 from datetime import datetime
 from rosbag2_py import *
+from rclpy.time import Time
 
 
 def create_reader(bag_dir: str, storage_type: str) -> SequentialReader:
@@ -41,4 +42,14 @@ def get_storage_options(uri: str, storage_type: str) -> StorageOptions:
 
 def get_starting_time(uri: str, storage_type: str) -> datetime:
     info = Info().read_metadata(uri, storage_type)
-    return info.starting_time
+    return rcl_py_time_to_datetime(info.starting_time)
+
+def get_ending_time(uri: str, storage_type: str) -> datetime:
+    info = Info().read_metadata(uri, storage_type)
+    return rcl_py_time_to_datetime(info.starting_time + info.duration)
+
+
+def rcl_py_time_to_datetime(ros_time: Time) -> datetime:
+    second, nanosecond = ros_time.seconds_nanoseconds()
+    timestamp = second + (nanosecond / 10**9)
+    return datetime.fromtimestamp(timestamp)

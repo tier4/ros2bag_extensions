@@ -20,22 +20,23 @@ from ros2bag.verb import VerbExtension
 from rosbag2_py import *
 from rosbag2_py_wrapper import SequentialWriterWrapper
 
-from . import create_reader, get_default_converter_options, get_storage_options
+from . import create_reader, get_default_converter_options, get_storage_options, get_starting_time, get_ending_time
 
 
 class SliceVerb(VerbExtension):
     ''' Save the specified range of data as a bag file by specifying the start time and end time. '''
     def _bag2slice_with_start_end_time(self, input_bag_dir: str, output_bag_dir: str, start_time: datetime.datetime, end_time: datetime.datetime, latched_topic: list[str], storage_type: str) -> None:
         # Check timestamp
-        metadata = Info().read_metadata(input_bag_dir, "sqlite3")
+        info_starting_time = get_starting_time(input_bag_dir, storage_type)
+        info_ending_time = get_ending_time(input_bag_dir, storage_type)
 
-        if start_time < metadata.starting_time:
+        if start_time < info_starting_time:
             print("No valid start time set. Start time automatically set the bag start time.")
-            start_time = metadata.starting_time
+            start_time = info_starting_time
 
-        if end_time > metadata.starting_time + metadata.duration:
+        if end_time > info_ending_time:
             print("No valid end time set. End time automatically set the bag end time.")
-            end_time = metadata.starting_time + metadata.duration
+            end_time = info_ending_time
 
         # Open writer
         storage_options = get_storage_options(output_bag_dir, storage_type)
