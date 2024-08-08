@@ -42,11 +42,17 @@ def get_storage_options(uri: str, storage_type: str) -> StorageOptions:
 
 def get_starting_time(uri: str, storage_type: str) -> datetime:
     info = Info().read_metadata(uri, storage_type)
-    return rcl_py_time_to_datetime(info.starting_time)
+    starting_time: datetime | Time = info.starting_time
+    if isinstance(starting_time, datetime):
+        return starting_time
+    return rcl_py_time_to_datetime(starting_time)
 
 def get_ending_time(uri: str, storage_type: str) -> datetime:
     info = Info().read_metadata(uri, storage_type)
-    return rcl_py_time_to_datetime(info.starting_time + info.duration)
+    ending_time: datetime | Time = info.starting_time + info.duration
+    if isinstance(ending_time, datetime):
+        return ending_time
+    return rcl_py_time_to_datetime(ending_time)
 
 
 def rcl_py_time_to_datetime(ros_time: Time) -> datetime:
