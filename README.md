@@ -26,7 +26,7 @@ cd $HOME/extension_ws/src
 git clone git@github.com:tier4/ros2bag_extensions.git
 # build workspace
 cd $HOME/extension_ws
-source /opt/ros/galactic/setup.bash
+source /opt/ros/humble/setup.bash
 rosdep install --from-paths . --ignore-src --rosdistro=${ROS_DISTRO}
 colcon build --symlink-install --catkin-skip-building-tests --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release
 ```
