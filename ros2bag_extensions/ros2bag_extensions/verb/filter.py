@@ -53,9 +53,13 @@ class FilterVerb(VerbExtension):
         writer = SequentialWriter()
         writer.open(storage_options, converter_options)
 
+        # get all topics metadata
+        input_bag_all_topics_meta = reader.get_all_topics_and_types()
+        candidate_topic_metadata = [ tm for tm in input_bag_all_topics_meta if tm.name in topic_list]
+
         # Create topics
-        for topic_type in reader.get_all_topics_and_types():
-            writer.create_topic(topic_type)
+        for tm in candidate_topic_metadata:
+            writer.create_topic(tm)
 
         # Write
         while reader.has_next():
