@@ -95,9 +95,9 @@ class SliceVerb(VerbExtension):
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
         parser.add_argument(
-            "-b", "--beginning-time", default=0.0, type=float, help="Beginning time in nanoseconds")
+            "-b", "--beginning-time", default=0.0, type=float, help="Beginning time in Unix timestamp (seconds)")  # 1970/01/01 00:00:00
         parser.add_argument(
-            "-e", "--end-time", default=4102412400, type=float, help="End time in nanoseconds")  # 2100/01/01 00:00:00
+            "-e", "--end-time", default=4102412400, type=float, help="End time in Unix timestamp (seconds)")  # 2100/01/01 00:00:00
         parser.add_argument(
             "-d", "--duration", type=float, help="duration second for slice")
         parser.add_argument(
