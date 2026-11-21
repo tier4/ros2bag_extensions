@@ -7,13 +7,14 @@ Extension commands for rosbag in ROS 2
 Supported ROS distributions:
 
 - humble
+- jazzy
 
 ### Optional
 
-If you want to use `mcap` format bags, you need to install the mcap package in advance.
+The default storage is `mcap` (the Jazzy default). On Humble, install the mcap package in advance; use `-s sqlite3` for sqlite3 bags.
 
 ```shell
-sudo apt install ros-humble-rosbag2-storage-mcap
+sudo apt install ros-${ROS_DISTRO}-rosbag2-storage-mcap
 ```
 
 ### Build
@@ -26,7 +27,7 @@ cd $HOME/extension_ws/src
 git clone git@github.com:tier4/ros2bag_extensions.git
 # build workspace
 cd $HOME/extension_ws
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash  # or humble
 rosdep install --from-paths . --ignore-src --rosdistro=${ROS_DISTRO}
 colcon build --symlink-install --catkin-skip-building-tests --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release
 ```
@@ -50,7 +51,7 @@ Usage:
 
 ```sh
 # sqlite3 format bag
-ros2 bag merge -o rosbag2_merged/ rosbag2_2021_08_20-12_28_24/ rosbag2_2021_08_20-12_30_03/
+ros2 bag merge -o rosbag2_merged/ rosbag2_2021_08_20-12_28_24/ rosbag2_2021_08_20-12_30_03/ -s sqlite3
 
 # mcap format bag
 ros2 bag merge -o rosbag2_merged/ rosbag2_2021_08_20-12_28_24/ rosbag2_2021_08_20-12_30_03/ -s mcap
@@ -66,7 +67,7 @@ If you want to include the specified topic, use `-i` or `--include`.
 
 ```sh
 # sqlite3 format bag
-ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
+ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/system/emergency/turn_signal_cmd" "/autoware/driving_capability" -s sqlite3
 
 # mcap format bag
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -i "/system/emergency/turn_signal_cmd" "/autoware/driving_capability" -s mcap
@@ -79,7 +80,7 @@ If you want to exclude the specified topic, use `-x` or `--exclude`.
 
 ```sh
 # sqlite3 format bag
-ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/system/emergency/turn_signal_cmd" "/autoware/driving_capability"
+ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/system/emergency/turn_signal_cmd" "/autoware/driving_capability" -s sqlite3
 # use regular expression
 ros2 bag filter -o rosbag2_filtered/ rosbag2_merged/ -x "/sensing/.*" "/vehicle/.*"
 ```
@@ -96,7 +97,7 @@ Usage:
 
 ```sh
 # sqlite3 format, from 1629430104.911167670 to the bag end time
-ros2 bag slice input_bag -o sliced_from -b 1629430104.911167670
+ros2 bag slice input_bag -o sliced_from -b 1629430104.911167670 -s sqlite3
 
 # mcap format, from 1629430104.911167670 to the bag end time
 ros2 bag slice input_bag -o sliced_from -b 1629430104.911167670 -s mcap

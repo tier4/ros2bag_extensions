@@ -56,7 +56,7 @@ class MergeVerb(VerbExtension):
         parser.add_argument(
             "-o", "--output", required=True, help="Output directory")
         parser.add_argument(
-            "-s", "--storage", required=False, default="sqlite3", help="storage identifier to be used, defaults to 'sqlite3'")
+            "-s", "--storage", required=False, default="mcap", help="storage identifier to be used, defaults to 'mcap'")
 
 
     def main(self, *, args):
